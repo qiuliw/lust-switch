@@ -1,11 +1,9 @@
 import { useActionLog } from '#/app/use-action-log'
-import { installClash } from '#/lib/clash'
 import ActionRow from '#/components/ActionRow'
+import { installClash } from '#/lib/clash'
 
 export default function NetworkPanel() {
-  const { busy, log, error, run } = useActionLog(
-    '安装包随应用分发，启动后按 Clash Verge 自己的向导完成。',
-  )
+  const { busy, run } = useActionLog()
 
   return (
     <section
@@ -33,12 +31,6 @@ export default function NetworkPanel() {
           ]}
         />
       </ul>
-      <p
-        className={`m-0 border-t border-[var(--line)] px-5 py-4 text-sm leading-6 sm:px-6 ${error ? 'text-red-700 dark:text-red-300' : 'text-[var(--sea-ink-soft)]'}`}
-        aria-live="polite"
-      >
-        {error ?? log}
-      </p>
     </section>
   )
 }

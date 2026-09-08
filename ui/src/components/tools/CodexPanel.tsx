@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
+import toast from 'react-hot-toast'
 import { useActionLog } from '#/app/use-action-log'
 import ActionRow from '#/components/ActionRow'
 import SecretField from '#/components/SecretField'
@@ -7,17 +8,9 @@ import { buildImageSkillPrompt } from '#/lib/image-prompt'
 
 export default function CodexPanel() {
   const [apiKey, setApiKey] = useState('')
-  const { busy, log, error, run } = useActionLog(
-    '写入中转前请确认 Codex 已关闭。密钥只存在当前窗口。',
-  )
-  const trimmedKey = useMemo(() => apiKey.trim(), [apiKey])
-  const hasKey = trimmedKey.length > 0
-
-  function requireKey() {
-    if (!hasKey) {
-      throw new Error('请先填入中转站 API 密钥')
-    }
-  }
+  const { busy, run } = useActionLog()
+  const key = apiKey.trim()
+  const hasKey = key.length > 0
 
   return (
     <section
@@ -49,12 +42,16 @@ export default function CodexPanel() {
             {
               id: 'apply',
               label: busy === 'apply' ? '写入中…' : '写入',
-              onClick: () =>
+              onClick: () => {
+                if (!hasKey) {
+                  toast.error('请先填入中转站 API 密钥')
+                  return
+                }
                 run('apply', async () => {
-                  requireKey()
-                  await applyCodexRelay(trimmedKey)
+                  await applyCodexRelay(key)
                   return '中转已写入。请重启 Codex。'
-                }),
+                })
+              },
             },
             {
               id: 'exit',
@@ -77,22 +74,20 @@ export default function CodexPanel() {
             {
               id: 'copy',
               label: busy === 'copy' ? '复制中…' : '复制文案',
-              onClick: () =>
+              onClick: () => {
+                if (!hasKey) {
+                  toast.error('请先填入中转站 API 密钥')
+                  return
+                }
                 run('copy', async () => {
-                  requireKey()
-                  await copyText(buildImageSkillPrompt(trimmedKey))
+                  await copyText(buildImageSkillPrompt(key))
                   return '文案已复制，可直接粘贴到 Codex。'
-                }),
+                })
+              },
             },
           ]}
         />
       </ul>
-      <p
-        className={`m-0 border-t border-[var(--line)] px-5 py-4 text-sm leading-6 sm:px-6 ${error ? 'text-red-700 dark:text-red-300' : 'text-[var(--sea-ink-soft)]'}`}
-        aria-live="polite"
-      >
-        {error ?? log}
-      </p>
     </section>
   )
 }

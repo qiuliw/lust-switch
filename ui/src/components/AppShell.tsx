@@ -1,3 +1,4 @@
+import { Toaster } from 'react-hot-toast'
 import Header from './Header'
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
@@ -5,6 +6,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
     <div className="flex min-h-dvh flex-col">
       <Header />
       <div className="flex-1">{children}</div>
+      <Toaster position="bottom-right" />
     </div>
   )
 }
