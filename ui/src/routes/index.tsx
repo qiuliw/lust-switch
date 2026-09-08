@@ -1,59 +1,30 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
-import { installClash } from '#/lib/clash'
+import { createFileRoute, useRouterState } from '@tanstack/react-router'
+import { useEffect } from 'react'
+import CodexPanel from '#/components/tools/CodexPanel'
+import NetworkPanel from '#/components/tools/NetworkPanel'
 
-export const Route = createFileRoute('/')({ component: App })
+export const Route = createFileRoute('/')({ component: Home })
 
-function App() {
-  const [status, setStatus] = useState<'idle' | 'launching' | 'done' | 'error'>(
-    'idle',
-  )
-  const [error, setError] = useState<string | null>(null)
+function Home() {
+  const hash = useRouterState({ select: (state) => state.location.hash })
 
-  async function onInstallClash() {
-    setStatus('launching')
-    setError(null)
-    try {
-      await installClash()
-      setStatus('done')
-    } catch (err) {
-      setStatus('error')
-      setError(err instanceof Error ? err.message : String(err))
+  useEffect(() => {
+    const id = hash.replace(/^#/, '')
+    if (!id) {
+      return
     }
-  }
+    requestAnimationFrame(() => {
+      document.getElementById(id)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start',
+      })
+    })
+  }, [hash])
 
   return (
-    <main className="page-wrap px-4 pb-8 pt-14">
-      <section className="island-shell rise-in relative overflow-hidden rounded-[2rem] px-6 py-10 sm:px-10 sm:py-14">
-        <div className="pointer-events-none absolute -left-20 -top-24 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(79,184,178,0.32),transparent_66%)]" />
-        <div className="pointer-events-none absolute -bottom-20 -right-20 h-56 w-56 rounded-full bg-[radial-gradient(circle,rgba(47,106,74,0.18),transparent_66%)]" />
-        <p className="island-kicker mb-3">Lust</p>
-        <h1 className="display-title mb-5 max-w-3xl text-4xl leading-[1.02] font-bold tracking-tight text-[var(--sea-ink)] sm:text-6xl">
-          Install Clash Verge
-        </h1>
-        <p className="mb-8 max-w-2xl text-base text-[var(--sea-ink-soft)] sm:text-lg">
-          Launch the bundled Clash Verge installer with one click. The setup
-          package ships with this app under Tauri resources.
-        </p>
-        <div className="flex flex-wrap items-center gap-3">
-          <button
-            type="button"
-            onClick={onInstallClash}
-            disabled={status === 'launching'}
-            className="rounded-full border border-[rgba(50,143,151,0.3)] bg-[rgba(79,184,178,0.14)] px-5 py-2.5 text-sm font-semibold text-[var(--lagoon-deep)] transition hover:-translate-y-0.5 hover:bg-[rgba(79,184,178,0.24)] disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {status === 'launching' ? 'Launching…' : 'Install Clash Verge'}
-          </button>
-          {status === 'done' ? (
-            <span className="text-sm text-[var(--sea-ink-soft)]">
-              Installer launched.
-            </span>
-          ) : null}
-          {status === 'error' && error ? (
-            <span className="text-sm text-red-700">{error}</span>
-          ) : null}
-        </div>
-      </section>
+    <main className="page-wrap flex flex-col gap-5 px-4 py-6">
+      <NetworkPanel />
+      <CodexPanel />
     </main>
   )
 }

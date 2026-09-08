@@ -1,14 +1,10 @@
 import {
   HeadContent,
+  Outlet,
   Scripts,
   createRootRouteWithContext,
 } from '@tanstack/react-router'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { TanStackDevtools } from '@tanstack/react-devtools'
-import Footer from '../components/Footer'
-import Header from '../components/Header'
-
-import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
+import AppShell from '../components/AppShell'
 
 import appCss from '../styles.css?url'
 
@@ -42,45 +38,38 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     ],
   }),
   notFoundComponent: NotFound,
+  component: RootLayout,
   shellComponent: RootDocument,
 })
 
 function NotFound() {
   return (
-    <main className="page-wrap px-4 py-16">
+    <main className="px-6 py-16">
       <h1 className="mb-2 text-2xl font-bold text-[var(--sea-ink)]">
-        Page not found
+        页面不存在
       </h1>
-      <p className="text-[var(--sea-ink-soft)]">
-        The page you requested does not exist.
-      </p>
+      <p className="text-[var(--sea-ink-soft)]">回到首页即可。</p>
     </main>
+  )
+}
+
+function RootLayout() {
+  return (
+    <AppShell>
+      <Outlet />
+    </AppShell>
   )
 }
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="zh-CN" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <HeadContent />
       </head>
       <body className="font-sans antialiased [overflow-wrap:anywhere] selection:bg-[rgba(79,184,178,0.24)]">
-        <Header />
         {children}
-        <Footer />
-        <TanStackDevtools
-          config={{
-            position: 'bottom-right',
-          }}
-          plugins={[
-            {
-              name: 'Tanstack Router',
-              render: <TanStackRouterDevtoolsPanel />,
-            },
-            TanStackQueryDevtools,
-          ]}
-        />
         <Scripts />
       </body>
     </html>
