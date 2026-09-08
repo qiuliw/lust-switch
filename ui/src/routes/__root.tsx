@@ -31,7 +31,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'TanStack Start Starter',
+        title: 'Lust',
       },
     ],
     links: [
@@ -41,8 +41,22 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       },
     ],
   }),
+  notFoundComponent: NotFound,
   shellComponent: RootDocument,
 })
+
+function NotFound() {
+  return (
+    <main className="page-wrap px-4 py-16">
+      <h1 className="mb-2 text-2xl font-bold text-[var(--sea-ink)]">
+        Page not found
+      </h1>
+      <p className="text-[var(--sea-ink-soft)]">
+        The page you requested does not exist.
+      </p>
+    </main>
+  )
+}
 
 function RootDocument({ children }: { children: React.ReactNode }) {
   return (
