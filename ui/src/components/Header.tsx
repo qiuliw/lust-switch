@@ -1,11 +1,23 @@
 import { Link, useRouterState } from '@tanstack/react-router'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { tools } from '../app/tools'
 import ThemeToggle from './ThemeToggle'
 
+function activeToolFromScroll(header: HTMLElement | null) {
+  const line = (header?.getBoundingClientRect().bottom ?? 72) + 16
+  let current = tools[0].id
+  for (const tool of tools) {
+    const el = document.getElementById(tool.id)
+    if (el && el.getBoundingClientRect().top <= line) {
+      current = tool.id
+    }
+  }
+  return current
+}
+
 export default function Header() {
   const pathname = useRouterState({ select: (state) => state.location.pathname })
-  const hash = useRouterState({ select: (state) => state.location.hash })
+  const headerRef = useRef<HTMLElement>(null)
   const [active, setActive] = useState<string>('network')
 
   useEffect(() => {
@@ -13,35 +25,24 @@ export default function Header() {
       return
     }
 
-    const fromHash = hash.replace(/^#/, '')
-    if (fromHash) {
-      setActive(fromHash)
+    function sync() {
+      setActive(activeToolFromScroll(headerRef.current))
     }
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
-        if (visible?.target.id) {
-          setActive(visible.target.id)
-        }
-      },
-      { rootMargin: '-30% 0px -50% 0px', threshold: [0.15, 0.4, 0.7] },
-    )
-
-    for (const tool of tools) {
-      const el = document.getElementById(tool.id)
-      if (el) {
-        observer.observe(el)
-      }
+    sync()
+    window.addEventListener('scroll', sync, { passive: true })
+    window.addEventListener('resize', sync)
+    return () => {
+      window.removeEventListener('scroll', sync)
+      window.removeEventListener('resize', sync)
     }
-
-    return () => observer.disconnect()
-  }, [pathname, hash])
+  }, [pathname])
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[var(--line)] bg-[var(--header-bg)] px-4 backdrop-blur-lg">
+    <header
+      ref={headerRef}
+      className="sticky top-0 z-50 border-b border-[var(--line)] bg-[var(--header-bg)] px-4 backdrop-blur-lg"
+    >
       <nav className="page-wrap flex flex-wrap items-center gap-x-3 gap-y-2 py-3 sm:py-4">
         <h2 className="m-0 flex-shrink-0 text-base font-semibold tracking-tight">
           <Link

@@ -1,4 +1,4 @@
-export const RELAY_BASE_URL = 'https://codexaizh.com/v1'
+export const RELAY_BASE_URL = 'https://api.admincloudai.com/v1'
 export const IMAGE_MODEL = 'gpt-image-2'
 
 export function buildImageSkillPrompt(apiKey: string): string {

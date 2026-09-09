@@ -7,7 +7,7 @@ use toml_edit::{DocumentMut, Item, Table, value};
 pub const RELAY_MODEL: &str = "gpt-5.6-sol";
 pub const RELAY_PROVIDER_ID: &str = "newaigpt";
 pub const RELAY_PROVIDER_NAME: &str = "AIGPT";
-pub const RELAY_BASE_URL: &str = "https://codexaizh.com/v1";
+pub const RELAY_BASE_URL: &str = "https://api.admincloudai.com/v1";
 pub const RELAY_WIRE_API: &str = "responses";
 
 const CONFIG_NAME: &str = "config.toml";
@@ -224,7 +224,7 @@ followUpQueueMode = "queue"
         assert!(output.contains("model = \"gpt-5.6-sol\""));
         assert!(output.contains("model_provider = \"newaigpt\""));
         assert!(output.contains("[model_providers.newaigpt]"));
-        assert!(output.contains("base_url = \"https://codexaizh.com/v1\""));
+        assert!(output.contains("base_url = \"https://api.admincloudai.com/v1\""));
         assert!(output.contains("[desktop]"));
         assert!(output.contains("[mcp_servers]"));
     }
