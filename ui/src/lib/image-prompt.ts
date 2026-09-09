@@ -1,8 +1,8 @@
-export const RELAY_BASE_URL = 'https://api.admincloudai.com/v1'
-export const IMAGE_MODEL = 'gpt-image-2'
+export const RELAY_BASE_URL = "https://api.admincloudai.com/v1";
+export const IMAGE_MODEL = "gpt-image-2";
 
 export function buildImageSkillPrompt(apiKey: string): string {
-  const key = apiKey.trim()
+  const key = apiKey.trim();
   return `我的中转站 API 密钥：${key}
 
 请直接在本机创建或更新图片生成技能 image-generator，不要只说明步骤，也不要向我回显、记录或输出上面的 API 密钥。
@@ -34,7 +34,6 @@ base_url.rstrip("/") + "/images/generations"
 
 默认参数：
 - model=${IMAGE_MODEL}
-- size=1024x1024
 - quality=auto
 - n=1
 - response_format=b64_json
@@ -42,6 +41,7 @@ base_url.rstrip("/") + "/images/generations"
 - 超时不自动重试
 
 要求：
+- size 参数不提供默认值，调用时根据具体场景传入 
 - 支持 b64_json 和 url 两种图片返回；
 - 自动保存到当前项目的 outputs 文件夹；
 - 文件名带时间戳且不重复；
@@ -52,5 +52,5 @@ base_url.rstrip("/") + "/images/generations"
 
 全部完成后，只回复：
 图片生成技能已配置完成
-`
+`;
 }
